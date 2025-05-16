@@ -23,8 +23,7 @@ public class TaskManager {
     }
 
     public <T extends Task> void createTask(T newTask) {
-        if (newTask instanceof EpicTask) {
-            EpicTask epicTask = (EpicTask) newTask;
+        if (newTask instanceof EpicTask epicTask) {
             this.tasks.put(epicTask.getTaskUUID(), epicTask);
             epicTask.getSubTasksList().forEach(subTask ->
                     this.tasks.put(subTask.getTaskUUID(), subTask));
