@@ -34,11 +34,7 @@ public class TaskManager {
     }
 
     public List<Task> getAllTasks() {
-        List<Task> allTasks = new ArrayList<>();
-        for (Task task : this.tasks.values()) {
-            allTasks.add(task);
-        }
-        return allTasks;
+        return new ArrayList<>(this.tasks.values());
     }
 
     public void removeAllTasks() {

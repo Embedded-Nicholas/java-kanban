@@ -19,7 +19,6 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-//        return STR."\{super.toString()} {epicTask=\{epicTask.getTaskUUID()}}";
-        return "Это сабтаска";
+        return STR."\{super.toString()} {epicTask=\{epicTask.getTaskUUID()}}";
     }
 }
