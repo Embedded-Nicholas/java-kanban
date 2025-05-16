@@ -18,6 +18,7 @@ public class Main {
         SubTask subTask1 = new SubTask(epicTask1);
         SubTask subTask2 = new SubTask(epicTask1);
 
+
         EpicTask epicTask2 = new EpicTask();
         SubTask subTask3 = new SubTask(epicTask2);
 
@@ -25,6 +26,9 @@ public class Main {
         taskManager.createTask(task2);
         taskManager.createTask(epicTask1);
         taskManager.createTask(epicTask2);
+
+        taskManager.deleteTaskByUUID(epicTask1.getTaskUUID());
+        System.out.println(taskManager.getAllTasks());
 
     }
 }

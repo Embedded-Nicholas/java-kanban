@@ -23,15 +23,22 @@ public class TaskManager {
     }
 
     public <T extends Task> void createTask(T newTask) {
-        List<? extends Task> tasksToAdd = newTask instanceof EpicTask
-                ? ((EpicTask) newTask).getSubTasksList()
-                : List.of(newTask);
-
-        tasksToAdd.forEach(task -> this.tasks.put(task.getTaskUUID(), task));
+        if (newTask instanceof EpicTask) {
+            EpicTask epicTask = (EpicTask) newTask;
+            this.tasks.put(epicTask.getTaskUUID(), epicTask);
+            epicTask.getSubTasksList().forEach(subTask ->
+                    this.tasks.put(subTask.getTaskUUID(), subTask));
+        } else {
+            this.tasks.put(newTask.getTaskUUID(), newTask);
+        }
     }
 
     public List<Task> getAllTasks() {
-        return this.getSpecialTypeTasks(Task.class);
+        List<Task> allTasks = new ArrayList<>();
+        for (Task task : this.tasks.values()) {
+            allTasks.add(task);
+        }
+        return allTasks;
     }
 
     public void removeAllTasks() {
@@ -49,6 +56,12 @@ public class TaskManager {
     }
 
     public void deleteTaskByUUID(UUID uuid) {
+        Task task = this.getTaskByUUID(uuid);
+        if (task instanceof EpicTask) {
+            ((EpicTask) task).getSubTasksList().forEach(
+                    subtask -> this.tasks.remove(subtask.getTaskUUID())
+            );
+        }
         this.tasks.remove(uuid);
     }
 
