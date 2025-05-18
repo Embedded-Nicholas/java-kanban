@@ -2,23 +2,27 @@ package Tasks;
 
 import Enums.Status;
 
-public class SubTask extends Task {
-    private EpicTask epicTask;
+import java.util.UUID;
 
-    public SubTask(EpicTask task) {
+public class SubTask extends Task {
+    private final UUID epicTaskId;
+
+    public SubTask(UUID epicTaskId) {
         super();
-        this.epicTask = task;
-        this.epicTask.addSubTask(this);
+        this.epicTaskId = epicTaskId;
     }
 
-    @Override
-    public void setStatus(Status status) {
-        super.setStatus(status);
-        this.epicTask.checkEpicTaskFulfilled();
+//    public void setStatus(Status status, EpicTask epicTask) {
+//        super.setStatus(status);
+//        epicTask.checkEpicTaskFulfilled();
+//    }
+
+    public UUID getEpicTaskId() {
+        return epicTaskId;
     }
 
     @Override
     public String toString() {
-        return STR."\{super.toString()} {epicTask=\{epicTask.getTaskUUID()}}";
+        return STR."\{super.toString()} {epicTaskId=\{epicTaskId}}";
     }
 }
