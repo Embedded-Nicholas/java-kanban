@@ -5,20 +5,20 @@ import java.util.UUID;
 import Enums.Status;
 
 public class Task {
+    protected final UUID id;
     protected String name;
     protected String description;
-    protected UUID taskUUID;
     protected Status status;
 
     public Task() {
-        this.taskUUID = UUID.randomUUID();
+        this.id = UUID.randomUUID();
         this.status = Status.NEW;
     }
 
-    public Task(String name, String description, UUID taskUUID, Status status) {
+    public Task(String name, String description, UUID taskUUID) {
         this.name = name;
         this.description = description;
-        this.taskUUID = taskUUID;
+        this.id = taskUUID;
     }
 
     public String getName() {
@@ -37,12 +37,8 @@ public class Task {
         this.description = description;
     }
 
-    public UUID getTaskUUID() {
-        return this.taskUUID;
-    }
-
-    public void setTaskUUID(UUID taskUUID) {
-        this.taskUUID = taskUUID;
+    public UUID getId() {
+        return this.id;
     }
 
     public Status getStatus() {
@@ -60,17 +56,17 @@ public class Task {
         Task task = (Task) o;
         return Objects.equals(name, task.name)
                 && Objects.equals(description, task.description)
-                && Objects.equals(taskUUID, task.taskUUID)
+                && Objects.equals(id, task.id)
                 && Objects.equals(status, task.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, taskUUID, status);
+        return Objects.hash(name, description, id, status);
     }
 
     @Override
     public String toString() {
-        return STR."{name='\{name}', description='\{description}', taskUUID=\{taskUUID}, status=\{status}}";
+        return STR."{name='\{name}', description='\{description}', taskUUID=\{id}, status=\{status}}";
     }
 }
