@@ -1,6 +1,7 @@
 package Enums;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,7 +14,7 @@ public enum Status {
 
     private static final Map<String, Status> STATUS_MAP =
             Stream.of(Status.values())
-                    .collect(Collectors.toMap(Object::toString, e -> e));
+                    .collect(Collectors.toMap(Status::toString, e -> e));
 
     Status(String status) {
         this.status = status;
@@ -25,7 +26,7 @@ public enum Status {
     }
 
     public static Status fromString(String status) {
-        return STATUS_MAP.getOrDefault(status, null);
+        return Optional.ofNullable(STATUS_MAP.get(status)).orElse(Status.NEW);
     }
 }
 
