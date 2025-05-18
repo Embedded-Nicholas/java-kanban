@@ -1,9 +1,8 @@
-package Tasks;
-
-import Enums.Status;
+package ru.yandex.practicum.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class EpicTask extends Task {
@@ -34,6 +33,20 @@ public class EpicTask extends Task {
 
     public void clearSubTasks(){
         this.subTasksList.clear();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        EpicTask epicTask = (EpicTask) obj;
+        return Objects.equals(this.subTasksList, epicTask.getSubTasksIdList());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), this.subTasksList);
     }
 
     @Override

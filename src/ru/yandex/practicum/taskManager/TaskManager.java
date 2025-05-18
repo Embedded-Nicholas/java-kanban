@@ -1,11 +1,11 @@
-package TaskManager;
+package ru.yandex.practicum.taskManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import Enums.Status;
-import Tasks.EpicTask;
-import Tasks.SubTask;
-import Tasks.Task;
+import ru.yandex.practicum.status.Status;
+import ru.yandex.practicum.model.EpicTask;
+import ru.yandex.practicum.model.SubTask;
+import ru.yandex.practicum.model.Task;
 
 public class TaskManager {
     private final HashMap<UUID, Task> tasks = new HashMap<>();

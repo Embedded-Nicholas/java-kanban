@@ -1,8 +1,8 @@
-package Tasks;
+package ru.yandex.practicum.model;
 
 import java.util.Objects;
 import java.util.UUID;
-import Enums.Status;
+import ru.yandex.practicum.status.Status;
 
 public class Task {
     protected final UUID id;

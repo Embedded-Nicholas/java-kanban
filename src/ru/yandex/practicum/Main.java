@@ -1,8 +1,12 @@
-import Enums.Status;
-import TaskManager.TaskManager;
-import Tasks.EpicTask;
-import Tasks.SubTask;
-import Tasks.Task;
+package ru.yandex.practicum;
+
+import ru.yandex.practicum.status.Status;
+import ru.yandex.practicum.taskManager.TaskManager;
+import ru.yandex.practicum.model.EpicTask;
+import ru.yandex.practicum.model.SubTask;
+import ru.yandex.practicum.model.Task;
+
+import java.util.Objects;
 
 public class Main {
 
@@ -24,6 +28,5 @@ public class Main {
         taskManager.updateTask(subTask2, Status.IN_PROGRESS);
 
         System.out.println(epicTask1.getStatus());
-
     }
 }

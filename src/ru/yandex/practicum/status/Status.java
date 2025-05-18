@@ -1,4 +1,4 @@
-package Enums;
+package ru.yandex.practicum.status;
 
 import java.util.Map;
 import java.util.Optional;
