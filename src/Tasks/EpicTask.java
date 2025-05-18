@@ -4,51 +4,40 @@ import Enums.Status;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class EpicTask extends Task {
-    private final List<SubTask> subTasksList;
+    private final List<UUID> subTasksList;
 
     public EpicTask() {
         super();
         this.subTasksList = new ArrayList<>();
     }
 
-    public EpicTask(List<SubTask> subTaskList) {
+    public EpicTask(List<UUID> subTaskList) {
         super();
         this.subTasksList = subTaskList;
     }
 
-    public List<SubTask> getSubTasksList() {
+    public List<UUID> getSubTasksIdList() {
         return this.subTasksList;
     }
 
-    void addSubTask(SubTask subTask) {
-        this.subTasksList.add(subTask);
+    public void addSubTaskById(UUID subTaskId) {
+        if (!this.subTasksList.contains(subTaskId))
+            this.subTasksList.add(subTaskId);
     }
 
-    public void deleteSubTask(SubTask subTask) {
-        this.subTasksList.remove(subTask);
+    public void removeSubTaskId(UUID subTaskId) {
+        subTasksList.remove(subTaskId);
     }
 
-    void checkEpicTaskFulfilled() {
-        boolean allSubTasksDone = this.subTasksList
-                .stream()
-                .allMatch(subTask -> subTask.getStatus() == Status.DONE);
-
-        boolean epicTaskHasSubTasksInProcessOrDone = this.subTasksList.
-                stream().
-                anyMatch(subTask -> subTask.getStatus().equals(Status.IN_PROGRESS)
-                        || subTask.getStatus().equals(Status.DONE));
-
-        if (allSubTasksDone) {
-            this.setStatus(Status.DONE);
-        } else if (epicTaskHasSubTasksInProcessOrDone) {
-            this.status = Status.IN_PROGRESS;
-        }
+    public void clearSubTasks(){
+        this.subTasksList.clear();
     }
 
     @Override
     public String toString() {
-        return STR."\{super.toString()} {subTaskIds=\{subTasksList.stream().map(Task::getTaskUUID).toList()}}";
+        return STR."\{super.toString()} {subTaskIds=\{subTasksList.stream().toList()}}";
     }
 }
