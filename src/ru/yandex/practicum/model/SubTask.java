@@ -6,23 +6,22 @@ import java.util.UUID;
 public class SubTask extends Task {
     private final UUID epicTaskId;
 
-    public SubTask(UUID epicTaskId) {
-        super();
+    public SubTask(String name, String description, UUID epicTaskId) {
+        super(name, description);
         this.epicTaskId = epicTaskId;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        SubTask subTask = (SubTask) obj;
-        return Objects.equals(this.epicTaskId, subTask.epicTaskId);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), this.epicTaskId);
+        return super.hashCode();
     }
 
     public UUID getEpicTaskId() {

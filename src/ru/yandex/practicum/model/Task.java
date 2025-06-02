@@ -4,21 +4,21 @@ import java.util.Objects;
 import java.util.UUID;
 import ru.yandex.practicum.status.Status;
 
-public class Task {
-    protected final UUID id;
+public class Task implements Cloneable{
+    protected UUID id;
     protected String name;
     protected String description;
     protected Status status;
 
-    public Task() {
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
         this.id = UUID.randomUUID();
         this.status = Status.NEW;
     }
 
-    public Task(String name, String description, UUID taskUUID) {
-        this.name = name;
-        this.description = description;
-        this.id = taskUUID;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -54,19 +54,21 @@ public class Task {
         if (this == o) return true;
         if (o == null || this.getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(name, task.name)
-                && Objects.equals(description, task.description)
-                && Objects.equals(id, task.id)
-                && Objects.equals(status, task.status);
+        return Objects.equals(id, task.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status);
+        return Objects.hash(this.id);
     }
 
     @Override
     public String toString() {
         return STR."{name='\{name}', description='\{description}', taskUUID=\{id}, status=\{status}}";
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
