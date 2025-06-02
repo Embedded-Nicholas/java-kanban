@@ -1,21 +1,26 @@
-package ru.yandex.practicum.taskManager;
+package ru.yandex.practicum.manager.task;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import ru.yandex.practicum.manager.history.HistoryManager;
+import ru.yandex.practicum.manager.history.InMemoryHistoryManager;
 import ru.yandex.practicum.status.Status;
 import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
+import ru.yandex.practicum.util.Managers;
 
-public class TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private final HashMap<UUID, Task> tasks = new HashMap<>();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
-    public TaskManager() {}
+    public InMemoryTaskManager() {}
 
-    public List<Task> getAllTasks() {
-        return new ArrayList<>(this.tasks.values());
-    }
+    @Override
+    public List<Task> getAllTasks() {return new ArrayList<>(this.tasks.values());}
 
+    @Override
     public <T extends Task> List<T> getSpecialTypeTasks(Class<T> taskClass) {
         return tasks.values().stream()
                 .filter(task -> task.getClass().equals(taskClass))
@@ -23,26 +28,42 @@ public class TaskManager {
                 .collect(Collectors.toList());
     }
 
-    public <T extends Task> void createTask(T newTask) {
+    @Override
+    public <T extends Task> void add(T newTask) {
         if (newTask instanceof SubTask subTask) {
+            if (subTask.getId().equals(subTask.getEpicTaskId())) {
+                throw new IllegalArgumentException("Эпик не может быть подзадачей самого себя или подзадача не может быть своим эпиком");
+            }
+
             Task potentialEpic = this.tasks.get(subTask.getEpicTaskId());
             if (potentialEpic instanceof EpicTask epicTask) {
                 epicTask.addSubTaskById(subTask.getId());
             } else {
-                throw new IllegalStateException("Parent epic not found or wrong type");
+                throw new IllegalStateException("Не найден Эпик-родитель");
             }
         }
         tasks.put(newTask.getId(), newTask);
     }
 
+    @Override
+    public Collection<Task> getHistory() {
+        return this.historyManager.getHistory();
+    }
+
+    @Override
     public void removeAllTasks() {
         this.tasks.clear();
     }
 
+    @Override
     public Task getTaskByUUID(UUID uuid) {
+        if (this.tasks.containsKey(uuid)) {
+            this.historyManager.add(this.tasks.get(uuid));
+        }
         return this.tasks.get(uuid);
     }
 
+    @Override
     public <T extends Task> void updateTask(T task, Status newStatus) {
         if (task == null || task instanceof EpicTask) {
             return;
@@ -54,6 +75,22 @@ public class TaskManager {
         if (task instanceof SubTask subTask) {
             updateEpicStatusForSubTask(subTask);
         }
+    }
+
+    @Override
+    public void deleteTaskByUUID(UUID uuid) {
+        Task task = this.tasks.get(uuid);
+        switch (task) {
+            case null -> {
+                return;
+            }
+            case EpicTask epicTask -> deleteEpicTask(epicTask);
+            case SubTask subTask -> deleteSubTask(subTask);
+            default -> {
+            }
+        }
+
+        this.tasks.remove(uuid);
     }
 
     private void updateEpicStatusForSubTask(SubTask subTask) {
@@ -94,23 +131,8 @@ public class TaskManager {
                 .collect(Collectors.toList());
     }
 
-    public void deleteTaskByUUID(UUID uuid) {
-        Task task = this.tasks.get(uuid);
-        switch (task) {
-            case null -> {
-                return;
-            }
-            case EpicTask epicTask -> deleteEpicTask(epicTask);
-            case SubTask subTask -> deleteSubTask(subTask);
-            default -> {
-            }
-        }
-
-        this.tasks.remove(uuid);
-    }
-
     private void deleteEpicTask(EpicTask epicTask) {
-        new ArrayList<>(epicTask.getSubTasksIdList()).forEach(this.tasks::remove);
+        epicTask.getSubTasksIdList().forEach(this.tasks::remove);
         epicTask.clearSubTasks();
     }
 

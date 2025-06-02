@@ -8,14 +8,9 @@ import java.util.UUID;
 public class EpicTask extends Task {
     private final List<UUID> subTasksList;
 
-    public EpicTask() {
-        super();
+    public EpicTask(String name, String description) {
+        super(name, description);
         this.subTasksList = new ArrayList<>();
-    }
-
-    public EpicTask(List<UUID> subTaskList) {
-        super();
-        this.subTasksList = subTaskList;
     }
 
     public List<UUID> getSubTasksIdList() {
@@ -36,17 +31,16 @@ public class EpicTask extends Task {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        EpicTask epicTask = (EpicTask) obj;
-        return Objects.equals(this.subTasksList, epicTask.getSubTasksIdList());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), this.subTasksList);
+        return super.hashCode();
     }
 
     @Override
