@@ -1,6 +1,7 @@
 package ru.yandex.practicum.manager.history;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.manager.task.InMemoryTaskManager;
 import ru.yandex.practicum.manager.task.TaskManager;
@@ -9,11 +10,10 @@ import ru.yandex.practicum.model.Task;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    private static TaskManager taskManager;
+    private TaskManager taskManager;
 
-
-    @BeforeAll
-    static void init(){
+    @BeforeEach
+    void init(){
         taskManager = new InMemoryTaskManager();
     }
 

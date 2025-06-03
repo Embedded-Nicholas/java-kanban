@@ -1,44 +1,39 @@
 package ru.yandex.practicum.manager.task;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
-import ru.yandex.practicum.util.Managers;
+import ru.yandex.practicum.manager.util.Managers;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
-    private static TaskManager taskManager;
-
-    private static final Task task = new Task("Задача", "Описание");
-    private static final EpicTask epicTask = new EpicTask("Эпик", "Описание");
-    private static final SubTask subTask = new SubTask("Подзадача", "Описание", epicTask.getId());
-
-
-    @BeforeAll
-    static void init() {
-        taskManager = Managers.getDefault();
-    }
+    private TaskManager taskManager;
+    private Task task;
+    private EpicTask epicTask;
+    private SubTask subTask;
 
     @BeforeEach
-    void cleanTaskManager() {
-        taskManager.removeAllTasks();
+    void init() {
+        taskManager = Managers.getDefault();
+        task = new Task("Задача", "Описание");
+        epicTask = new EpicTask("Эпик", "Описание");
+        subTask = new SubTask("Подзадача", "Описание", epicTask.getId());
     }
 
     @Test
-    void deleteTaskByUUID(){
+    void deleteTaskByUUID() {
         taskManager.add(task);
         taskManager.deleteTaskByUUID(task.getId());
         assertEquals(0, taskManager.getAllTasks().size());
     }
 
     @Test
-    void deleteEpicTaskByUUID(){
+    void deleteEpicTaskByUUID() {
         taskManager.add(epicTask);
         taskManager.add(subTask);
         taskManager.deleteTaskByUUID(epicTask.getId());
@@ -46,7 +41,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void deleteSubTaskByUUID(){
+    void deleteSubTaskByUUID() {
         taskManager.add(epicTask);
         taskManager.add(subTask);
         taskManager.deleteTaskByUUID(subTask.getId());
@@ -58,18 +53,22 @@ class InMemoryTaskManagerTest {
 
     @Test
     void add() {
-        this.addTasks();
+        addTasks();
         assertAll(
-                () -> assertTrue(taskManager.getSpecialTypeTasks(Task.class).contains(task), "Обычная задача не найдена"),
-                () -> assertTrue(taskManager.getSpecialTypeTasks(EpicTask.class).contains(epicTask), "Эпик не найден"),
-                () -> assertTrue(taskManager.getSpecialTypeTasks(SubTask.class).contains(subTask), "Подзадача не найдена"),
-                () -> assertEquals(3, taskManager.getAllTasks().size(), "Неверное количество задач.")
+                () -> assertTrue(taskManager.getSpecialTypeTasks(Task.class).contains(task),
+                        "Обычная задача не найдена"),
+                () -> assertTrue(taskManager.getSpecialTypeTasks(EpicTask.class).contains(epicTask),
+                        "Эпик не найден"),
+                () -> assertTrue(taskManager.getSpecialTypeTasks(SubTask.class).contains(subTask),
+                        "Подзадача не найдена"),
+                () -> assertEquals(3, taskManager.getAllTasks().size(),
+                        "Неверное количество задач")
         );
     }
 
     @Test
     void findTaskById() {
-        this.addTasks();
+        addTasks();
 
         assertAll(
                 () -> assertEquals(task.getId(), taskManager.getTaskByUUID(task.getId()).getId()),
@@ -104,7 +103,8 @@ class InMemoryTaskManagerTest {
         assertAll(
                 () -> assertEquals(task.getId(), retrievedTask.getId(), "ID изменился"),
                 () -> assertEquals(task.getName(), retrievedTask.getName(), "Имя изменилось"),
-                () -> assertEquals(task.getDescription(), retrievedTask.getDescription(), "Описание изменилось"),
+                () -> assertEquals(task.getDescription(), retrievedTask.getDescription(),
+                        "Описание изменилось"),
                 () -> assertEquals(task.getStatus(), retrievedTask.getStatus(), "Статус изменился")
         );
     }
@@ -119,7 +119,8 @@ class InMemoryTaskManagerTest {
         assertAll(
                 () -> assertEquals(epicTask.getId(), retrievedTask.getId(), "ID изменился"),
                 () -> assertEquals(epicTask.getName(), retrievedTask.getName(), "Имя изменилось"),
-                () -> assertEquals(epicTask.getDescription(), retrievedTask.getDescription(), "Описание изменилось"),
+                () -> assertEquals(epicTask.getDescription(), retrievedTask.getDescription(),
+                        "Описание изменилось"),
                 () -> assertEquals(epicTask.getStatus(), retrievedTask.getStatus(), "Статус изменился"),
                 () -> assertEquals(epicTask.getSubTasksIdList().get(0), subTask.getId())
         );
@@ -135,7 +136,8 @@ class InMemoryTaskManagerTest {
         assertAll(
                 () -> assertEquals(subTask.getId(), retrievedTask.getId(), "ID изменился"),
                 () -> assertEquals(subTask.getName(), retrievedTask.getName(), "Имя изменилось"),
-                () -> assertEquals(subTask.getDescription(), retrievedTask.getDescription(), "Описание изменилось"),
+                () -> assertEquals(subTask.getDescription(), retrievedTask.getDescription(),
+                        "Описание изменилось"),
                 () -> assertEquals(subTask.getStatus(), retrievedTask.getStatus(), "Статус изменился"),
                 () -> assertEquals(subTask.getEpicTaskId(), epicTask.getId())
         );

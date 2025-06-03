@@ -4,12 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import ru.yandex.practicum.manager.history.HistoryManager;
-import ru.yandex.practicum.manager.history.InMemoryHistoryManager;
 import ru.yandex.practicum.status.Status;
 import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
-import ru.yandex.practicum.util.Managers;
+import ru.yandex.practicum.manager.util.Managers;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<UUID, Task> tasks = new HashMap<>();
