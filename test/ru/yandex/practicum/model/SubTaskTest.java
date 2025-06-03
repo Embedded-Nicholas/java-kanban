@@ -1,20 +1,19 @@
 package ru.yandex.practicum.model;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.manager.task.TaskManager;
-import ru.yandex.practicum.util.Managers;
-
-import java.util.UUID;
+import ru.yandex.practicum.manager.util.Managers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubTaskTest {
 
-    private static TaskManager taskManager;
+    private  TaskManager taskManager;
 
-    @BeforeAll
-    static void initialize() {
+    @BeforeEach
+    void initialize() {
         taskManager = Managers.getDefault();
     }
 

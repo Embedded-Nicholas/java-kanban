@@ -2,22 +2,20 @@ package ru.yandex.practicum.model;
 
 import org.junit.jupiter.api.*;
 import ru.yandex.practicum.manager.task.TaskManager;
-import ru.yandex.practicum.util.Managers;
+import ru.yandex.practicum.manager.util.Managers;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 class EpicTaskTest {
 
-    private static EpicTask epicTask;
-    private static UUID subTask1Id;
-    private static UUID subTask2Id;
-    private static TaskManager taskManager;
+    private EpicTask epicTask;
+    private UUID subTask1Id;
+    private UUID subTask2Id;
+    private TaskManager taskManager;
 
-    @BeforeAll
-    static void initialize() {
+    @BeforeEach
+    void initialize() {
         epicTask = new EpicTask("Эпик", "Описание");
         taskManager = Managers.getDefault();
 

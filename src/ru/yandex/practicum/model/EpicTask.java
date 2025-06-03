@@ -2,32 +2,31 @@ package ru.yandex.practicum.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class EpicTask extends Task {
-    private final List<UUID> subTasksList;
+    private final List<UUID> subTasksIdList;
 
     public EpicTask(String name, String description) {
         super(name, description);
-        this.subTasksList = new ArrayList<>();
+        this.subTasksIdList = new ArrayList<>();
     }
 
     public List<UUID> getSubTasksIdList() {
-        return this.subTasksList;
+        return this.subTasksIdList;
     }
 
     public void addSubTaskById(UUID subTaskId) {
-        if (!this.subTasksList.contains(subTaskId))
-            this.subTasksList.add(subTaskId);
+        if (!this.subTasksIdList.contains(subTaskId))
+            this.subTasksIdList.add(subTaskId);
     }
 
     public void removeSubTaskId(UUID subTaskId) {
-        subTasksList.remove(subTaskId);
+        subTasksIdList.remove(subTaskId);
     }
 
     public void clearSubTasks(){
-        this.subTasksList.clear();
+        this.subTasksIdList.clear();
     }
 
     @Override
@@ -45,6 +44,6 @@ public class EpicTask extends Task {
 
     @Override
     public String toString() {
-        return STR."\{super.toString()} {subTaskIds=\{subTasksList.stream().toList()}}";
+        return STR."\{super.toString()} {subTaskIds=\{subTasksIdList.stream().toList()}}";
     }
 }
