@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 import ru.yandex.practicum.status.Status;
 
-public class Task implements Cloneable{
+public class Task{
     protected UUID id;
     protected String name;
     protected String description;
@@ -74,8 +74,4 @@ public class Task implements Cloneable{
         return STR."{name='\{name}', description='\{description}', taskUUID=\{id}, status=\{status}}";
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }
