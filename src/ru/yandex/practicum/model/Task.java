@@ -17,6 +17,13 @@ public class Task implements Cloneable{
         this.status = Status.NEW;
     }
 
+    public Task(Task original){
+        this.id = original.id;
+        this.name = original.name;
+        this.description = original.description;
+        this.status = original.status;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }

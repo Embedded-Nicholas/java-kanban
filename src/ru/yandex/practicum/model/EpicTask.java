@@ -12,6 +12,11 @@ public class EpicTask extends Task {
         this.subTasksIdList = new ArrayList<>();
     }
 
+    public EpicTask(EpicTask original){
+        super(original);
+        this.subTasksIdList = new ArrayList<>();
+    }
+
     public List<UUID> getSubTasksIdList() {
         return this.subTasksIdList;
     }

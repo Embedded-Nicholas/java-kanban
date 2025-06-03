@@ -11,6 +11,11 @@ public class SubTask extends Task {
         this.epicTaskId = epicTaskId;
     }
 
+    public SubTask(SubTask original) {
+        super(original);
+        this.epicTaskId = original.epicTaskId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
