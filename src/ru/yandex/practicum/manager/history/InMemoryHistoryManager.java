@@ -10,7 +10,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private static final int HISTORY_LIMIT = 10;
 
     @Override
-    public void add(Task task){
+    public void add(Task task) {
         this.checkHistoryList(task);
     }
 
@@ -20,17 +20,12 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void checkHistoryList(Task task) {
-        try{
-            Task taskCopy = (Task) task.clone();
-            int size = this.taskHistory.size();
-            if (size == HISTORY_LIMIT){
-                this.taskHistory.removeFirst();
-            }
-            this.taskHistory.add(taskCopy);
-        } catch (CloneNotSupportedException e) {
-            e.getMessage();
+        Task taskCopy = new Task(task);
+        int size = this.taskHistory.size();
+        if (size == HISTORY_LIMIT) {
+            this.taskHistory.removeFirst();
         }
-
+        this.taskHistory.add(taskCopy);
     }
 
 }

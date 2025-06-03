@@ -26,6 +26,13 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    void removeAllTasks(){
+        this.addTasks();
+        taskManager.removeAllTasks();
+        assertEquals(0, taskManager.getAllTasks().size());
+    }
+
+    @Test
     void deleteTaskByUUID() {
         taskManager.add(task);
         taskManager.deleteTaskByUUID(task.getId());
