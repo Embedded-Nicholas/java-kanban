@@ -4,7 +4,7 @@ import ru.yandex.practicum.model.Task;
 
 import java.util.*;
 
-public class CustomTaskLinkedList implements CustomTaskList<Task>{
+public class CustomTaskLinkedList implements CustomTaskList<Task> {
     private Node head;
     private Node tail;
     private int size;
@@ -19,14 +19,14 @@ public class CustomTaskLinkedList implements CustomTaskList<Task>{
 
     @Override
     public void add(Task task) {
-        if (this.tasks.containsKey(task.getId())){
+        if (this.tasks.containsKey(task.getId())) {
             this.remove(task.getId());
         }
 
         Node newNode = new Node(null, task, null);
         if (this.size == 0) {
             this.head = newNode;
-        } else{
+        } else {
             newNode.previous = this.tail;
             newNode.next = null;
             this.tail.next = newNode;
@@ -45,20 +45,20 @@ public class CustomTaskLinkedList implements CustomTaskList<Task>{
 
             if (previous != null) {
                 previous.next = next;
-            } else{
+            } else {
                 head = next;
             }
 
-            if (next != null){
+            if (next != null) {
                 next.previous = previous;
-            } else{
+            } else {
                 tail = previous;
             }
 
             this.tasks.remove(taskId);
             this.size--;
 
-        } else{
+        } else {
             throw new IllegalArgumentException("Task not found");
         }
     }
@@ -111,7 +111,7 @@ public class CustomTaskLinkedList implements CustomTaskList<Task>{
 
     @Override
     public Iterator<Task> iterator() {
-        return new Iterator(){
+        return new Iterator() {
             private Node current = head;
 
             @Override
@@ -131,7 +131,7 @@ public class CustomTaskLinkedList implements CustomTaskList<Task>{
         };
     }
 
-    private static class Node{
+    private static class Node {
         Node previous;
         Task value;
         Node next;

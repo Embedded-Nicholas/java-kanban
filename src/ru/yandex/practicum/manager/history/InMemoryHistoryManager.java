@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.Task;
 import java.util.*;
 
 
-public class InMemoryHistoryManager <T extends Task> implements HistoryManager<T> {
+public class InMemoryHistoryManager<T extends Task> implements HistoryManager<T> {
     private final CustomTaskList<Task> taskHistory = new CustomTaskLinkedList();
 
     @Override

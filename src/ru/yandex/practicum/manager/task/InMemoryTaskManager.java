@@ -14,14 +14,17 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<UUID, Task> tasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
-    public InMemoryTaskManager() {}
+    public InMemoryTaskManager() {
+    }
 
     public HashMap<UUID, Task> getTasks() {
         return this.tasks;
     }
 
     @Override
-    public List<Task> getAllTasks() {return new ArrayList<>(this.tasks.values());}
+    public List<Task> getAllTasks() {
+        return new ArrayList<>(this.tasks.values());
+    }
 
     @Override
     public <T extends Task> List<T> getSpecialTypeTasks(Class<T> taskClass) {
@@ -95,7 +98,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
 
-        if(isInHistory(task)) {
+        if (isInHistory(task)) {
             this.historyManager.remove(uuid);
         }
         this.tasks.remove(uuid);

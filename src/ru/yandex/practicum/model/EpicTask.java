@@ -12,7 +12,7 @@ public class EpicTask extends Task {
         this.subTasksIdList = new ArrayList<>();
     }
 
-    public EpicTask(EpicTask original){
+    public EpicTask(EpicTask original) {
         super(original);
         this.subTasksIdList = new ArrayList<>(original.getSubTasksIdList());
     }
@@ -30,7 +30,7 @@ public class EpicTask extends Task {
         this.subTasksIdList.remove(subTaskId);
     }
 
-    public void clearSubTasks(){
+    public void clearSubTasks() {
         this.subTasksIdList.clear();
     }
 

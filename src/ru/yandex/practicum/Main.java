@@ -45,7 +45,7 @@ public class Main {
                 .map(Task::toString)
                 .toList();
 
-        System.out.println(String.join("\n",taskStrings));
+        System.out.println(String.join("\n", taskStrings));
 
         System.out.println();
 
@@ -53,7 +53,7 @@ public class Main {
         List<String> taskStrings2 = taskManager.getHistory().stream()
                 .map(Task::toString)
                 .toList();
-        System.out.println(String.join("\n",taskStrings2));
+        System.out.println(String.join("\n", taskStrings2));
 
 
         System.out.println(epicTask1.getStatus());
