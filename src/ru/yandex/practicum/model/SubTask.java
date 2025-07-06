@@ -1,6 +1,5 @@
 package ru.yandex.practicum.model;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class SubTask extends Task {
