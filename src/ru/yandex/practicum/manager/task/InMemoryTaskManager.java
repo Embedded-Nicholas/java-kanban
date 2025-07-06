@@ -16,12 +16,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     public InMemoryTaskManager() {}
 
+    public HashMap<UUID, Task> getTasks() {
+        return this.tasks;
+    }
+
     @Override
     public List<Task> getAllTasks() {return new ArrayList<>(this.tasks.values());}
 
     @Override
     public <T extends Task> List<T> getSpecialTypeTasks(Class<T> taskClass) {
-        return tasks.values().stream()
+        return this.tasks.values().stream()
                 .filter(task -> task.getClass().equals(taskClass))
                 .map(taskClass::cast)
                 .collect(Collectors.toList());
@@ -31,19 +35,20 @@ public class InMemoryTaskManager implements TaskManager {
     public <T extends Task> void add(T newTask) {
         if (newTask instanceof SubTask subTask) {
             if (subTask.getId().equals(subTask.getEpicTaskId())) {
-                throw new IllegalArgumentException("Эпик не может быть подзадачей самого себя или подзадача не может быть своим эпиком");
+                throw new IllegalArgumentException("An epic cannot be a subtask of itself, and a subtask cannot be its own epic");
             }
 
             Task potentialEpic = this.tasks.get(subTask.getEpicTaskId());
             if (potentialEpic instanceof EpicTask epicTask) {
                 epicTask.addSubTaskById(subTask.getId());
             } else {
-                throw new IllegalStateException("Не найден Эпик-родитель");
+                throw new IllegalStateException("An Epic-parent not found");
             }
         }
-        tasks.put(newTask.getId(), newTask);
+        this.tasks.put(newTask.getId(), newTask);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<Task> getHistory() {
         return this.historyManager.getHistory();
@@ -54,6 +59,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasks.clear();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Task getTaskByUUID(UUID uuid) {
         if (this.tasks.containsKey(uuid)) {
@@ -69,7 +75,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         task.setStatus(newStatus);
-        tasks.put(task.getId(), task);
+        this.tasks.put(task.getId(), task);
 
         if (task instanceof SubTask subTask) {
             updateEpicStatusForSubTask(subTask);
@@ -89,12 +95,19 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
 
+        if(isInHistory(task)) {
+            this.historyManager.remove(uuid);
+        }
         this.tasks.remove(uuid);
+    }
+
+    private boolean isInHistory(Task task) {
+        return this.historyManager.getHistory().stream().toList().contains(task);
     }
 
     private void updateEpicStatusForSubTask(SubTask subTask) {
         UUID epicId = subTask.getEpicTaskId();
-        Task potentialEpic = tasks.get(epicId);
+        Task potentialEpic = this.tasks.get(epicId);
 
         if (potentialEpic instanceof EpicTask epicTask) {
             updateEpicStatus(epicTask);
@@ -119,26 +132,31 @@ public class InMemoryTaskManager implements TaskManager {
             epicTask.setStatus(Status.NEW);
         }
 
-        tasks.put(epicTask.getId(), epicTask);
+        this.tasks.put(epicTask.getId(), epicTask);
     }
 
     private List<SubTask> getValidSubTasks(EpicTask epicTask) {
         return epicTask.getSubTasksIdList().stream()
-                .map(tasks::get)
+                .map(this.tasks::get)
                 .filter(SubTask.class::isInstance)
                 .map(SubTask.class::cast)
                 .collect(Collectors.toList());
     }
 
     private void deleteEpicTask(EpicTask epicTask) {
+        if (isInHistory(epicTask))
+            epicTask.getSubTasksIdList().forEach(this.historyManager::remove);
+
         epicTask.getSubTasksIdList().forEach(this.tasks::remove);
         epicTask.clearSubTasks();
+
     }
 
     private void deleteSubTask(SubTask subTask) {
         Task potentialEpic = this.tasks.get(subTask.getEpicTaskId());
         if (potentialEpic instanceof EpicTask epicTask) {
             epicTask.removeSubTaskId(subTask.getId());
+            this.historyManager.update(epicTask);
         }
     }
 }
