@@ -20,9 +20,9 @@ class InMemoryTaskManagerTest {
     @BeforeEach
     void init() {
         taskManager = Managers.getDefault();
-        task = new Task("Задача", "Описание");
-        epicTask = new EpicTask("Эпик", "Описание");
-        subTask = new SubTask("Подзадача", "Описание", epicTask.getId());
+        task = new Task("Task", "Description");
+        epicTask = new EpicTask("Epic", "Description");
+        subTask = new SubTask("Subtask", "Description", epicTask.getId());
     }
 
     @Test

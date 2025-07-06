@@ -19,16 +19,16 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void editedDataShouldBeSavedInHistoryList(){
-        Task task = new Task("Задача", "Описание");
+        Task task = new Task("Task", "Description");
         taskManager.add(task);
         taskManager.getTaskByUUID(task.getId());
-        task.setName("Измененная задача");
-        task.setDescription("Измененное описание");
+        task.setName("Changed task");
+        task.setDescription("Changed description");
 
         Task retrievedTask = taskManager.getHistory().stream().toList().getFirst();
         assertAll(
-                () -> assertEquals("Задача", retrievedTask.getName()),
-                () -> assertEquals("Описание", retrievedTask.getDescription())
+                () -> assertEquals("Task", retrievedTask.getName()),
+                () -> assertEquals("Description", retrievedTask.getDescription())
         );
     }
 
