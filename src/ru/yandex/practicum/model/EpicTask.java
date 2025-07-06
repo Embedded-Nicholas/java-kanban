@@ -14,7 +14,7 @@ public class EpicTask extends Task {
 
     public EpicTask(EpicTask original){
         super(original);
-        this.subTasksIdList = new ArrayList<>();
+        this.subTasksIdList = new ArrayList<>(original.getSubTasksIdList());
     }
 
     public List<UUID> getSubTasksIdList() {
@@ -27,7 +27,7 @@ public class EpicTask extends Task {
     }
 
     public void removeSubTaskId(UUID subTaskId) {
-        subTasksIdList.remove(subTaskId);
+        this.subTasksIdList.remove(subTaskId);
     }
 
     public void clearSubTasks(){
@@ -37,7 +37,7 @@ public class EpicTask extends Task {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         return true;
     }
