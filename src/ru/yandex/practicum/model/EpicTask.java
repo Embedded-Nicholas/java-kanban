@@ -49,6 +49,10 @@ public class EpicTask extends Task {
 
     @Override
     public String toString() {
-        return STR."\{super.toString()} {subTaskIds=\{subTasksIdList.stream().toList()}}";
+        return String.format(
+                "%s {subTaskIds=%s}",
+                super.toString(),
+                subTasksIdList.stream().toList()
+        );
     }
 }
