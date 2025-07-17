@@ -16,11 +16,11 @@ class EpicTaskTest {
 
     @BeforeEach
     void initialize() {
-        epicTask = new EpicTask("Эпик", "Описание");
+        epicTask = new EpicTask("Epic", "Description");
         taskManager = Managers.getDefault();
 
-        SubTask subTask1 = new SubTask("Подзадача", "Описание", epicTask.getId());
-        SubTask subTask2 = new SubTask("Подзадача", "Описание", epicTask.getId());
+        SubTask subTask1 = new SubTask("Subtask", "Description", epicTask.getId());
+        SubTask subTask2 = new SubTask("Subtask", "Description", epicTask.getId());
 
         taskManager.add(epicTask);
         taskManager.add(subTask1);
@@ -57,8 +57,8 @@ class EpicTaskTest {
 
     @Test
     void epicCannotBeSubtaskOfItself() {
-        EpicTask epic = new EpicTask("Эпик", "Описание");
-        SubTask invalidSubTask = new SubTask("Подзадача", "Описание", epic.getId());
+        EpicTask epic = new EpicTask("Epic", "Description");
+        SubTask invalidSubTask = new SubTask("Subtask", "Description", epic.getId());
         invalidSubTask.setId(epic.getId());
 
         taskManager.add(epic);
@@ -68,6 +68,6 @@ class EpicTaskTest {
                 () -> taskManager.add(invalidSubTask)
         );
 
-        assertEquals("Эпик не может быть подзадачей самого себя или подзадача не может быть своим эпиком", exception.getMessage());
+        assertEquals("An epic cannot be a subtask of itself, and a subtask cannot be its own epic", exception.getMessage());
     }
 }

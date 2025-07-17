@@ -2,9 +2,10 @@ package ru.yandex.practicum.model;
 
 import java.util.Objects;
 import java.util.UUID;
+
 import ru.yandex.practicum.status.Status;
 
-public class Task{
+public class Task {
     protected UUID id;
     protected String name;
     protected String description;
@@ -17,7 +18,7 @@ public class Task{
         this.status = Status.NEW;
     }
 
-    public Task(Task original){
+    public Task(Task original) {
         this.id = original.id;
         this.name = original.name;
         this.description = original.description;
@@ -71,7 +72,10 @@ public class Task{
 
     @Override
     public String toString() {
-        return STR."{name='\{name}', description='\{description}', taskUUID=\{id}, status=\{status}}";
+        return String.format(
+                "{name='%s', description='%s', taskUUID=%s, status=%s}",
+                name, description, id, status
+        );
     }
 
 }

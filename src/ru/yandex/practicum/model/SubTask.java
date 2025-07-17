@@ -1,6 +1,5 @@
 package ru.yandex.practicum.model;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class SubTask extends Task {
@@ -35,6 +34,10 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return STR."\{super.toString()} {epicTaskId=\{epicTaskId}}";
+        return String.format(
+                "%s {epicTaskId=%s}",
+                super.toString(),
+                epicTaskId
+        );
     }
 }
