@@ -1,52 +1,59 @@
-package src.ru.yandex.practicum.manager.task.file;
+package ru.yandex.practicum.manager.task.file;
 
-import src.ru.yandex.practicum.manager.savemode.SaveMode;
-import src.ru.yandex.practicum.model.Task;
 
-import java.io.*;
-import java.nio.file.Files;
+import ru.yandex.practicum.manager.loader.FileLoader;
+import ru.yandex.practicum.manager.saver.FileSaver;
+import ru.yandex.practicum.manager.task.TaskManager;
+import ru.yandex.practicum.manager.task.memory.InMemoryTaskManager;
+import ru.yandex.practicum.model.Task;
+import ru.yandex.practicum.status.Status;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-//import ru.yandex.practicum.model.Task;
-//import ru.yandex.practicum.status.Status;
+import java.util.Collection;
+import java.util.UUID;
 
 
-public class FileBackedTaskManager {
-    private static final String FILE_PATH = "result.txt";
+public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T> implements TaskManager<T> {
+    private Path currentFilePath  = Paths.get("result.txt");
+    private static final FileSaver fileSaver = new FileSaver();
 
-    public static void save(SaveMode saveMode, Task task) {
-        saveMode.save(FILE_PATH, task);
+    @Override
+    public void add(T newTask) {
+        super.add(newTask);
+        this.save();
     }
 
-    public static ArrayList<String> loadFromFile() {
-        ArrayList<String> tasks = new ArrayList<>();
-        Path path = Paths.get(FILE_PATH);
-        if (!Files.exists(path)) {
-            return new ArrayList<>();
-        }
+    @Override
+    public void removeAllTasks() {
+        super.removeAllTasks();
+        this.save();
+    }
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
-            while (reader.ready()) {
-                String str = reader.readLine();
-                tasks.add(str);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new ArrayList<>();
+    @Override
+    public void updateTask(T task, Status newStatus) {
+        super.updateTask(task, newStatus);
+        this.save();
+    }
 
-//        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
-//            Object obj = ois.readObject();
-//            if (obj instanceof List) {
-//                return (List<Task>) obj;
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        return new ArrayList<>();
+    @Override
+    public void deleteTaskByUUID(UUID uuid) {
+        super.deleteTaskByUUID(uuid);
+        this.save();
+    }
+
+    @Override
+    public Collection<T> loadFromFile(Path path) {
+        FileLoader fileLoader = new FileLoader();
+        Collection<T> tasks = fileLoader.load(path);
+        return tasks;
+    }
+
+    public void setFileName(Path fileName) {
+        currentFilePath = fileName;
+    }
+
+    private void save() {
+        fileSaver.save(this.getAllTasks(),currentFilePath);
     }
 }
