@@ -3,24 +3,29 @@ package ru.yandex.practicum.manager.task;
 import ru.yandex.practicum.model.Task;
 import ru.yandex.practicum.status.Status;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public interface TaskManager {
-    List<Task> getAllTasks();
+public interface TaskManager<T extends Task> {
+    List<T> getAllTasks();
 
     void removeAllTasks();
 
-    Task getTaskByUUID(UUID uuid);
+    T getTaskByUUID(UUID uuid);
 
-    <T extends Task> void updateTask(T task, Status newStatus);
+    void updateTask(T task, Status newStatus);
 
     void deleteTaskByUUID(UUID uuid);
 
-    <T extends Task> List<T> getSpecialTypeTasks(Class<T> taskClass);
+    <S extends T> List<S> getSpecialTypeTasks(Class<S> taskClass);
 
-    <T extends Task> void add(T newTask);
+    void add(T newTask);
 
-    Collection<Task> getHistory();
+    Collection<T> getHistory();
+
+    Collection<T> loadFromFile(Path path);
+
+    void setFileName(Path fileName);
 }

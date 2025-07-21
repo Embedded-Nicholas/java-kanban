@@ -1,5 +1,7 @@
 package ru.yandex.practicum.model;
 
+import ru.yandex.practicum.status.Status;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +17,11 @@ public class EpicTask extends Task {
     public EpicTask(EpicTask original) {
         super(original);
         this.subTasksIdList = new ArrayList<>(original.getSubTasksIdList());
+    }
+
+    public EpicTask(Task task, List<UUID> subTasksIdList) {
+        super(task);
+        this.subTasksIdList = subTasksIdList;
     }
 
     public List<UUID> getSubTasksIdList() {
@@ -50,7 +57,7 @@ public class EpicTask extends Task {
     @Override
     public String toString() {
         return String.format(
-                "%s {subTaskIds=%s}",
+                "%s, %s",
                 super.toString(),
                 subTasksIdList.stream().toList()
         );
