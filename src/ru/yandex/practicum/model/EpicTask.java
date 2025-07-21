@@ -1,7 +1,5 @@
 package ru.yandex.practicum.model;
 
-import ru.yandex.practicum.status.Status;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
