@@ -15,7 +15,7 @@ import java.util.UUID;
 
 
 public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T> implements TaskManager<T> {
-    private Path currentFilePath  = Paths.get("result.txt");
+    private Path currentFilePath = Paths.get("result.txt");
     private static final FileSaver fileSaver = new FileSaver();
 
     @Override
@@ -54,6 +54,6 @@ public class FileBackedTaskManager<T extends Task> extends InMemoryTaskManager<T
     }
 
     private void save() {
-        fileSaver.save(this.getAllTasks(),currentFilePath);
+        fileSaver.save(this.getAllTasks(), currentFilePath);
     }
 }
