@@ -63,11 +63,11 @@ class InMemoryTaskManagerTest {
     void add() {
         addTasks();
         assertAll(
-                () -> assertTrue(taskManager.getSpecialTypeTasks(Task.class).contains(task),
+                () -> assertTrue(taskManager.getTasksByType(Task.class).contains(task),
                         "Task should be present in the manager"),
-                () -> assertTrue(taskManager.getSpecialTypeTasks(EpicTask.class).contains(epicTask),
+                () -> assertTrue(taskManager.getTasksByType(EpicTask.class).contains(epicTask),
                         "Epic should be present in the manager"),
-                () -> assertTrue(taskManager.getSpecialTypeTasks(SubTask.class).contains(subTask),
+                () -> assertTrue(taskManager.getTasksByType(SubTask.class).contains(subTask),
                         "Subtask should be present in the manager"),
                 () -> assertEquals(3, taskManager.getAllTasks().size(),
                         "Total tasks count should be 3")

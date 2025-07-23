@@ -2,21 +2,18 @@ package ru.yandex.practicum;
 
 import ru.yandex.practicum.manager.task.TaskManager;
 import ru.yandex.practicum.manager.util.Managers;
-//import ru.yandex.practicum.model.EpicTask;
-//import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
 
-import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
         Task task1 = new Task("Task1", "Description1");
         Task task2 = new Task("Task2", "Description2");
-//
+
         TaskManager taskManager = Managers.getDefault();
 
         EpicTask epicTask1 = new EpicTask("Epic1", "EpicDescription1");
@@ -35,33 +32,29 @@ public class Main {
         taskManager.add(subTask3);
 
         taskManager.add(epicTask2);
-//
-//        taskManager.getTaskByUUID(task1.getId());
-//        taskManager.getTaskByUUID(task2.getId());
-//        taskManager.getTaskByUUID(epicTask1.getId());
-//        taskManager.getTaskByUUID(subTask1.getId());
-//        taskManager.getTaskByUUID(subTask2.getId());
-//        taskManager.getTaskByUUID(subTask3.getId());
-//
-//        List<String> taskStrings = taskManager.getHistory().stream()
-//                .map(Task::toString)
-//                .toList();
-//
-//        System.out.println(String.join("\n", taskStrings));
-//
-//        System.out.println();
-//
+
+        taskManager.getTaskByUUID(task1.getId());
+        taskManager.getTaskByUUID(task2.getId());
+        taskManager.getTaskByUUID(epicTask1.getId());
+        taskManager.getTaskByUUID(subTask1.getId());
+        taskManager.getTaskByUUID(subTask2.getId());
+        taskManager.getTaskByUUID(subTask3.getId());
+
+        List<String> taskStrings = taskManager.getHistory().stream()
+                .map(task -> task.toString())
+                .toList();
+
+        System.out.println(String.join("\n", taskStrings));
+
+        System.out.println();
+
         taskManager.deleteTaskByUUID(subTask1.getId());
-//        List<String> taskStrings2 = taskManager.getHistory().stream()
-//                .map(Task::toString)
-//                .toList();
-//        System.out.println(String.join("\n", taskStrings2));
-//
-//
-//        System.out.println(epicTask1.getStatus());
-        Collection<Task> tasks = taskManager.loadFromFile(Paths.get("result.txt"));
-        for (Task task : tasks) {
-            System.out.println(task);
-        }
+        List<String> taskStrings2 = taskManager.getHistory().stream()
+                .map(task -> task.toString())
+                .toList();
+        System.out.println(String.join("\n", taskStrings2));
+
+
+        System.out.println(epicTask1.getStatus());
     }
 }

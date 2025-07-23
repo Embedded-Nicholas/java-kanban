@@ -12,29 +12,29 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public abstract class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
-    protected final HashMap<UUID, T> tasks = new LinkedHashMap<>();
+public class InMemoryTaskManager implements TaskManager {
+    protected final HashMap<UUID, Task> tasks = new LinkedHashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
-    protected HashMap<UUID, T> getTasks() {
+    protected HashMap<UUID, Task> getTasks() {
         return this.tasks;
     }
 
     @Override
-    public List<T> getAllTasks() {
+    public List<Task> getAllTasks() {
         return new ArrayList<>(this.tasks.values());
     }
 
     @Override
-    public <S extends T> List<S> getSpecialTypeTasks(Class<S> taskClass) {
+    public <T extends Task> List<T> getTasksByType(Class<T> taskType) {
         return this.tasks.values().stream()
-                .filter(task -> task.getClass().equals(taskClass))
-                .map(taskClass::cast)
+                .filter(taskType::isInstance)
+                .map(taskType::cast)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void add(T newTask) {
+    public void add(Task newTask) {
         if (newTask instanceof SubTask subTask) {
             if (subTask.getId().equals(subTask.getEpicTaskId())) {
                 throw new IllegalArgumentException("An epic cannot be a subtask of itself, and a subtask cannot be its own epic");
@@ -52,7 +52,7 @@ public abstract class InMemoryTaskManager<T extends Task> implements TaskManager
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<T> getHistory() {
+    public List<Task> getHistory() {
         return this.historyManager.getHistory();
     }
 
@@ -63,7 +63,7 @@ public abstract class InMemoryTaskManager<T extends Task> implements TaskManager
 
     @SuppressWarnings("unchecked")
     @Override
-    public T getTaskByUUID(UUID uuid) {
+    public Task getTaskByUUID(UUID uuid) {
         if (this.tasks.containsKey(uuid)) {
             this.historyManager.add(this.tasks.get(uuid));
         }
@@ -71,7 +71,7 @@ public abstract class InMemoryTaskManager<T extends Task> implements TaskManager
     }
 
     @Override
-    public void updateTask(T task, Status newStatus) {
+    public void updateTask(Task task, Status newStatus) {
         if (task == null || task instanceof EpicTask) {
             return;
         }
@@ -134,7 +134,7 @@ public abstract class InMemoryTaskManager<T extends Task> implements TaskManager
             epicTask.setStatus(Status.NEW);
         }
 
-        this.tasks.put(epicTask.getId(), (T) epicTask);
+        this.tasks.put(epicTask.getId(), epicTask);
     }
 
     protected List<SubTask> getValidSubTasks(EpicTask epicTask) {
