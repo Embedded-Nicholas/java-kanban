@@ -1,10 +1,10 @@
 package ru.yandex.practicum.manager.history;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.manager.task.InMemoryTaskManager;
 import ru.yandex.practicum.manager.task.TaskManager;
+import ru.yandex.practicum.manager.task.memory.InMemoryTaskManager;
+import ru.yandex.practicum.manager.util.Managers;
 import ru.yandex.practicum.model.Task;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +14,7 @@ class InMemoryHistoryManagerTest {
 
     @BeforeEach
     void init(){
-        taskManager = new InMemoryTaskManager();
+        this.taskManager = Managers.getDefault();
     }
 
     @Test
@@ -25,7 +25,7 @@ class InMemoryHistoryManagerTest {
         task.setName("Changed task");
         task.setDescription("Changed description");
 
-        Task retrievedTask = taskManager.getHistory().stream().toList().getFirst();
+        Task retrievedTask = (Task) taskManager.getHistory().stream().toList().getFirst();
         assertAll(
                 () -> assertEquals("Task", retrievedTask.getName()),
                 () -> assertEquals("Description", retrievedTask.getDescription())

@@ -1,6 +1,7 @@
 package ru.yandex.practicum;
 
-import ru.yandex.practicum.manager.task.InMemoryTaskManager;
+import ru.yandex.practicum.manager.task.TaskManager;
+import ru.yandex.practicum.manager.util.Managers;
 import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
@@ -13,7 +14,7 @@ public class Main {
         Task task1 = new Task("Task1", "Description1");
         Task task2 = new Task("Task2", "Description2");
 
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         EpicTask epicTask1 = new EpicTask("Epic1", "EpicDescription1");
         SubTask subTask1 = new SubTask("Subtask1", "SubtaskDescription1", epicTask1.getId());
@@ -40,7 +41,7 @@ public class Main {
         taskManager.getTaskByUUID(subTask3.getId());
 
         List<String> taskStrings = taskManager.getHistory().stream()
-                .map(Task::toString)
+                .map(task -> task.toString())
                 .toList();
 
         System.out.println(String.join("\n", taskStrings));
@@ -49,7 +50,7 @@ public class Main {
 
         taskManager.deleteTaskByUUID(subTask1.getId());
         List<String> taskStrings2 = taskManager.getHistory().stream()
-                .map(Task::toString)
+                .map(task -> task.toString())
                 .toList();
         System.out.println(String.join("\n", taskStrings2));
 

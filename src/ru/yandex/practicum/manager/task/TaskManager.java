@@ -3,7 +3,6 @@ package ru.yandex.practicum.manager.task;
 import ru.yandex.practicum.model.Task;
 import ru.yandex.practicum.status.Status;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,13 +13,13 @@ public interface TaskManager {
 
     Task getTaskByUUID(UUID uuid);
 
-    <T extends Task> void updateTask(T task, Status newStatus);
+    void updateTask(Task task, Status newStatus);
 
     void deleteTaskByUUID(UUID uuid);
 
-    <T extends Task> List<T> getSpecialTypeTasks(Class<T> taskClass);
+    public <T extends Task> List<T> getTasksByType(Class<T> taskType);
 
-    <T extends Task> void add(T newTask);
+    void add(Task newTask);
 
-    Collection<Task> getHistory();
+    List<Task> getHistory();
 }

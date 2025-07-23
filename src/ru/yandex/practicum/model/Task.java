@@ -7,6 +7,7 @@ import ru.yandex.practicum.status.Status;
 
 public class Task {
     protected UUID id;
+    protected String type;
     protected String name;
     protected String description;
     protected Status status;
@@ -16,6 +17,15 @@ public class Task {
         this.description = description;
         this.id = UUID.randomUUID();
         this.status = Status.NEW;
+        this.type = this.getClass().getSimpleName();
+    }
+
+    public Task(UUID id, String name, String description, Status status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.type = this.getClass().getSimpleName();
     }
 
     public Task(Task original) {
@@ -23,6 +33,7 @@ public class Task {
         this.name = original.name;
         this.description = original.description;
         this.status = original.status;
+        this.type = this.getClass().getSimpleName();
     }
 
     public void setId(UUID id) {
@@ -73,8 +84,8 @@ public class Task {
     @Override
     public String toString() {
         return String.format(
-                "{name='%s', description='%s', taskUUID=%s, status=%s}",
-                name, description, id, status
+                "%s, %s, %s, %s, %s",
+                this.id, this.type, this.name, this.description, this.status
         );
     }
 

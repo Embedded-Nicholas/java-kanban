@@ -1,5 +1,7 @@
 package ru.yandex.practicum.model;
 
+import ru.yandex.practicum.status.Status;
+
 import java.util.UUID;
 
 public class SubTask extends Task {
@@ -15,12 +17,21 @@ public class SubTask extends Task {
         this.epicTaskId = original.epicTaskId;
     }
 
+    public SubTask(Task task, UUID epicTaskId) {
+        super(task);
+        this.epicTaskId = epicTaskId;
+    }
+
+    public SubTask(UUID id, String name, String description, Status status, UUID epicTaskId) {
+        super(id, name, description, status);
+        this.epicTaskId = epicTaskId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        return true;
+        return super.equals(o);
     }
 
     @Override
@@ -35,7 +46,7 @@ public class SubTask extends Task {
     @Override
     public String toString() {
         return String.format(
-                "%s {epicTaskId=%s}",
+                "%s, %s",
                 super.toString(),
                 epicTaskId
         );

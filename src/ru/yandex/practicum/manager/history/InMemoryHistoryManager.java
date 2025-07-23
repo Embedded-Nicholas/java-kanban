@@ -9,19 +9,19 @@ import ru.yandex.practicum.model.Task;
 import java.util.*;
 
 
-public class InMemoryHistoryManager<T extends Task> implements HistoryManager<T> {
+public class InMemoryHistoryManager implements HistoryManager {
     private final CustomTaskList<Task> taskHistory = new CustomTaskLinkedList();
 
     @Override
-    public void add(T task) {
+    public void add(Task task) {
         this.addTaskCopy(task);
     }
 
     @Override
-    public ArrayList<T> getHistory() {
-        ArrayList<T> history = new ArrayList<>();
+    public ArrayList<Task> getHistory() {
+        ArrayList<Task> history = new ArrayList<>();
         for (Task task : this.taskHistory) {
-            history.add((T) task);
+            history.add(task);
         }
         return history;
     }
@@ -32,18 +32,17 @@ public class InMemoryHistoryManager<T extends Task> implements HistoryManager<T>
     }
 
     @Override
-    public void update(T task) {
+    public void update(Task task) {
         this.taskHistory.update(task);
     }
 
-    @SuppressWarnings("unchecked")
-    private void addTaskCopy(T task) {
+    private void addTaskCopy(Task task) {
         if (task instanceof EpicTask) {
-            taskHistory.add((T) new EpicTask((EpicTask) task));
+            taskHistory.add(new EpicTask((EpicTask) task));
         } else if (task instanceof SubTask) {
-            taskHistory.add((T) new SubTask((SubTask) task));
+            taskHistory.add(new SubTask((SubTask) task));
         } else {
-            taskHistory.add((T) new Task(task));
+            taskHistory.add(new Task(task));
         }
     }
 
