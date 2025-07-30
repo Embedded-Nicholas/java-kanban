@@ -16,4 +16,6 @@ public interface CustomTaskList<T extends Task> extends Iterable<T> {
     T get(UUID taskId);
 
     int size();
+
+    boolean contains(Task task);
 }

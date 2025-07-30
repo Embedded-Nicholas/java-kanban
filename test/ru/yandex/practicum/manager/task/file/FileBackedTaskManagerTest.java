@@ -1,9 +1,8 @@
 package ru.yandex.practicum.manager.task.file;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.model.EpicTask;
-import ru.yandex.practicum.model.SubTask;
+import ru.yandex.practicum.manager.task.TaskManagerTest;
 import ru.yandex.practicum.model.Task;
 
 import java.io.IOException;
@@ -14,53 +13,40 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
-    private FileBackedTaskManager taskManager;
-    private Task task;
-    private EpicTask epicTask;
-    private SubTask subTask;
-    private Path path;
-
-    @BeforeEach
-    void init() throws IOException {
-        this.path = Files.createTempFile("kanban", ".txt");
-        this.taskManager = new FileBackedTaskManager(this.path);
-
-        this.task = new Task("Task", "Description");
-        this.epicTask = new EpicTask("Epic", "Description");
-        this.subTask = new SubTask("Subtask", "Description", epicTask.getId());
-    }
-
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @Test
-    public void isFileClear() {
-        Collection<Task> items = FileBackedTaskManager.loadFromFile(this.path);
+    public void isFileClear() throws IOException {
+        this.taskManager.setPath(Files.createTempFile("kanban", ".txt"));
+        Collection<Task> items = this.taskManager.loadFromFile();
+        this.taskManager.setPath(Path.of("result.txt"));
         assertTrue(items.isEmpty());
     }
 
     @Test
-    public void add() {
-        this.addToTaskManager();
-        List<Task> items = (List<Task>) FileBackedTaskManager.loadFromFile(this.path);
-        assertAll(
-                () -> assertEquals(items.get(0), this.task),
-                () -> assertEquals(items.get(1), this.epicTask),
-                () -> assertEquals(items.get(2), this.subTask),
-                () -> assertEquals(items.size(), 3)
-        );
+    public void save() {
+        Assertions.assertDoesNotThrow(() -> {
+            this.taskManager.save();
+        });
     }
 
     @Test
-    public void deleteTaskByUUID() {
-        this.addToTaskManager();
-        this.taskManager.deleteTaskByUUID(this.task.getId());
-        assertTrue(this.taskManager.loadFromFile(this.path).size() == 2);
+    public void loadFromFile() {
+        for (Task task : this.taskManager.getAllTasks()) {
+            System.out.println(task);
+        }
+        this.taskManager.save();
 
+        List<Task> tasks = this.taskManager.loadFromFile().stream().toList();
+        assertAll(
+                () -> assertEquals(3, tasks.size()),
+                () -> assertEquals(tasks.getFirst(), this.task),
+                () -> assertEquals(tasks.get(1), this.epicTask),
+                () -> assertEquals(tasks.getLast(), this.subTask)
+        );
     }
 
-    private void addToTaskManager() {
-        this.taskManager.add(task);
-        this.taskManager.add(epicTask);
-        this.taskManager.add(subTask);
+    @Override
+    protected FileBackedTaskManager createTaskManager() {
+        return new FileBackedTaskManager(Path.of("result.txt"));
     }
-
 }

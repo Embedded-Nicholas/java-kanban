@@ -6,20 +6,23 @@ import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        Task task1 = new Task("Task1", "Description1");
-        Task task2 = new Task("Task2", "Description2");
+        Task task1 = new Task("Task1", "Description1", null, null);
+        Task task2 = new Task("Task2", "Description2", Duration.ofMinutes(25), LocalDateTime.of(2025, Month.JULY, 1, 11, 55));
 
         TaskManager taskManager = Managers.getDefault();
 
         EpicTask epicTask1 = new EpicTask("Epic1", "EpicDescription1");
-        SubTask subTask1 = new SubTask("Subtask1", "SubtaskDescription1", epicTask1.getId());
-        SubTask subTask2 = new SubTask("Subtask2", "SubtaskDescription2", epicTask1.getId());
-        SubTask subTask3 = new SubTask("Subtask3", "SubtaskDescription3", epicTask1.getId());
+        SubTask subTask1 = new SubTask("Subtask1", "SubtaskDescription1", epicTask1.getId(), Duration.ofHours(2), LocalDateTime.of(2025, Month.JULY, 1, 12, 20));
+        SubTask subTask2 = new SubTask("Subtask2", "SubtaskDescription2", epicTask1.getId(), Duration.ofHours(2), LocalDateTime.of(2025, Month.JULY, 2, 18, 45));
+        SubTask subTask3 = new SubTask("Subtask3", "SubtaskDescription3", epicTask1.getId(), Duration.ofHours(2), LocalDateTime.of(2025, Month.JULY, 3, 18, 59));
 
         EpicTask epicTask2 = new EpicTask("Epic2", "EpicDescription2");
 
@@ -39,6 +42,7 @@ public class Main {
         taskManager.getTaskByUUID(subTask1.getId());
         taskManager.getTaskByUUID(subTask2.getId());
         taskManager.getTaskByUUID(subTask3.getId());
+        taskManager.getTaskByUUID(epicTask2.getId());
 
         List<String> taskStrings = taskManager.getHistory().stream()
                 .map(task -> task.toString())
@@ -48,7 +52,6 @@ public class Main {
 
         System.out.println();
 
-        taskManager.deleteTaskByUUID(subTask1.getId());
         List<String> taskStrings2 = taskManager.getHistory().stream()
                 .map(task -> task.toString())
                 .toList();
@@ -56,5 +59,6 @@ public class Main {
 
 
         System.out.println(epicTask1.getStatus());
+        System.out.println(taskManager.getPrioritizedTasks());
     }
 }

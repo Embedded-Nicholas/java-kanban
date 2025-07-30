@@ -2,13 +2,15 @@ package ru.yandex.practicum.model;
 
 import ru.yandex.practicum.status.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class SubTask extends Task {
     private final UUID epicTaskId;
 
-    public SubTask(String name, String description, UUID epicTaskId) {
-        super(name, description);
+    public SubTask(String name, String description, UUID epicTaskId, Duration duration, LocalDateTime startTime) {
+        super(name, description, duration, startTime);
         this.epicTaskId = epicTaskId;
     }
 
@@ -22,8 +24,8 @@ public class SubTask extends Task {
         this.epicTaskId = epicTaskId;
     }
 
-    public SubTask(UUID id, String name, String description, Status status, UUID epicTaskId) {
-        super(id, name, description, status);
+    public SubTask(UUID id, String name, String description, Status status, UUID epicTaskId, Duration duration, LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
         this.epicTaskId = epicTaskId;
     }
 
@@ -40,7 +42,7 @@ public class SubTask extends Task {
     }
 
     public UUID getEpicTaskId() {
-        return epicTaskId;
+        return this.epicTaskId;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class SubTask extends Task {
         return String.format(
                 "%s, %s",
                 super.toString(),
-                epicTaskId
+                this.epicTaskId
         );
     }
 }

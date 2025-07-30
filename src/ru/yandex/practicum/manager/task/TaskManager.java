@@ -4,6 +4,7 @@ import ru.yandex.practicum.model.Task;
 import ru.yandex.practicum.status.Status;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface TaskManager {
@@ -17,9 +18,13 @@ public interface TaskManager {
 
     void deleteTaskByUUID(UUID uuid);
 
-    public <T extends Task> List<T> getTasksByType(Class<T> taskType);
+    <T extends Task> List<T> getTasksByType(Class<T> taskType);
 
     void add(Task newTask);
 
     List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
+
+    boolean checkTaskIntersection(Task taskToAdd);
 }

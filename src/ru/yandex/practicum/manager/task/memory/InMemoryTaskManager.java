@@ -166,7 +166,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasks.clear();
     }
 
-
     @Override
     public Task getTaskByUUID(UUID uuid) {
         if (this.tasks.containsKey(uuid)) {

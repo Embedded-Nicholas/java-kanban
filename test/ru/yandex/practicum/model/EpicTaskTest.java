@@ -3,12 +3,13 @@ package ru.yandex.practicum.model;
 import org.junit.jupiter.api.*;
 import ru.yandex.practicum.manager.task.TaskManager;
 import ru.yandex.practicum.manager.util.Managers;
+import ru.yandex.practicum.status.Status;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-class EpicTaskTest {
 
+class EpicTaskTest {
     private EpicTask epicTask;
     private UUID subTask1Id;
     private UUID subTask2Id;
@@ -19,8 +20,10 @@ class EpicTaskTest {
         epicTask = new EpicTask("Epic", "Description");
         taskManager = Managers.getDefault();
 
-        SubTask subTask1 = new SubTask("Subtask", "Description", epicTask.getId());
-        SubTask subTask2 = new SubTask("Subtask", "Description", epicTask.getId());
+        SubTask subTask1 = new SubTask("Subtask", "Description", epicTask.getId(),
+                null, null);
+        SubTask subTask2 = new SubTask("Subtask", "Description", epicTask.getId(),
+                null, null);
 
         taskManager.add(epicTask);
         taskManager.add(subTask1);
@@ -58,7 +61,8 @@ class EpicTaskTest {
     @Test
     void epicCannotBeSubtaskOfItself() {
         EpicTask epic = new EpicTask("Epic", "Description");
-        SubTask invalidSubTask = new SubTask("Subtask", "Description", epic.getId());
+        SubTask invalidSubTask = new SubTask("Subtask", "Description",
+                epic.getId(), null, null);
         invalidSubTask.setId(epic.getId());
 
         taskManager.add(epic);
@@ -68,6 +72,16 @@ class EpicTaskTest {
                 () -> taskManager.add(invalidSubTask)
         );
 
-        assertEquals("An epic cannot be a subtask of itself, and a subtask cannot be its own epic", exception.getMessage());
+        assertEquals("A subtask cannot be its own epic", exception.getMessage());
+    }
+
+    @Test
+    void checkEpicStatusIfSubtaskChanged() {
+        Task subTask1 = this.taskManager.getTaskByUUID(this.subTask1Id);
+        Task subTask2 = this.taskManager.getTaskByUUID(this.subTask2Id);
+
+        this.taskManager.updateTask(subTask1, Status.DONE);
+        this.taskManager.updateTask(subTask2, Status.DONE);
+        assertEquals(Status.DONE, this.epicTask.getStatus());
     }
 }
