@@ -14,7 +14,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        this.addTaskCopy(task);
+        if (!this.taskHistory.contains(task))
+            this.addTaskCopy(task);
     }
 
     @Override
