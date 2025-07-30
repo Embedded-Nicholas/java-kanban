@@ -10,8 +10,8 @@ class TaskTest {
     @Test
     void sameTaskSpecimensAreEqual() {
         UUID taskId = UUID.randomUUID();
-        Task task1 = new Task("Task", "Description");
-        Task task2 = new Task("Task", "Description");
+        Task task1 = new Task("Task", "Description", null, null);
+        Task task2 = new Task("Task", "Description", null, null);
 
         task1.setId(taskId);
         task2.setId(taskId);
@@ -23,8 +23,8 @@ class TaskTest {
         UUID taskId = UUID.randomUUID();
         EpicTask epicTask = new EpicTask("Epic", "Description");
 
-        SubTask subTask1 = new SubTask("Subtask", "Description", epicTask.getId());
-        SubTask subTask2 = new SubTask("Subtask", "Description", epicTask.getId());
+        SubTask subTask1 = new SubTask("Subtask", "Description", epicTask.getId(), null, null);
+        SubTask subTask2 = new SubTask("Subtask", "Description", epicTask.getId(), null, null);
 
         subTask1.setId(taskId);
         subTask2.setId(taskId);

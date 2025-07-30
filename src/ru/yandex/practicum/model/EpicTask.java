@@ -1,20 +1,30 @@
 package ru.yandex.practicum.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class EpicTask extends Task {
     private final List<UUID> subTasksIdList;
 
+    private LocalDateTime endTime;
+
     public EpicTask(String name, String description) {
-        super(name, description);
+        super(name, description, null, null);
         this.subTasksIdList = new ArrayList<>();
+        this.endTime = null;
     }
 
     public EpicTask(EpicTask original) {
         super(original);
         this.subTasksIdList = new ArrayList<>(original.getSubTasksIdList());
+    }
+
+    public EpicTask(Task task, List<UUID> subTasksIdList) {
+        super(task);
+        this.subTasksIdList = subTasksIdList;
     }
 
     public List<UUID> getSubTasksIdList() {
@@ -34,12 +44,20 @@ public class EpicTask extends Task {
         this.subTasksIdList.clear();
     }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
+    public Optional<LocalDateTime> getEndTime() {
+        return Optional.ofNullable(this.endTime);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || this.getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        return true;
+        return super.equals(o);
     }
 
     @Override
@@ -50,7 +68,7 @@ public class EpicTask extends Task {
     @Override
     public String toString() {
         return String.format(
-                "%s {subTaskIds=%s}",
+                "%s, %s",
                 super.toString(),
                 subTasksIdList.stream().toList()
         );
