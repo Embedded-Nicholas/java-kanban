@@ -15,13 +15,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
-    private static final String FILE_HEADER = "id, type, name, description, status, epicId/SubtaskIdsList";
+    private static final String FILE_HEADER = "id, type, name, description, status, duration, start time, end time, epicId/SubtaskIdsList";
     private static final int EXTENDED_TASK_ELEMENTS = 6;
     private Path path = Paths.get("result.txt");
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
 
     public FileBackedTaskManager() {
     }
@@ -57,59 +65,104 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     public void save() {
         try (BufferedWriter bf = new BufferedWriter(Files.newBufferedWriter(this.path))) {
             bf.write(FILE_HEADER + System.lineSeparator());
-            for (Task task : this.getAllTasks()) {
-                bf.write(task.toString() + System.lineSeparator());
-            }
+            this.getAllTasks().stream().forEach(task -> {
+                try {
+                    bf.write(task.toString() + System.lineSeparator());
+                } catch (IOException e) {
+                    throw new RuntimeException("Inner stream mistake");
+                }
+            });
         } catch (IOException e) {
             throw new ManagerSaveException("Something went wrong while trying to save the file.");
         }
     }
 
-    public static Collection<Task> loadFromFile(Path path) {
-        Collection<Task> tasks = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(Files.newBufferedReader(path))) {
-            String line = br.readLine();
-            while (br.ready()) {
-                line = br.readLine();
-                tasks.add(fromString(line));
-            }
+    public Collection<Task> loadFromFile() {
+        try (BufferedReader br = new BufferedReader(Files.newBufferedReader(this.path))) {
+            return br.lines().skip(1)
+                    .map(line -> {
+                        try {
+                            return fromString(line);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            return null;
+                        }
+                    })
+                    .collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
-        return tasks;
+        return Collections.emptyList();
     }
 
-    public static Task fromString(String line) {
+    private Task fromString(String line) {
         Objects.requireNonNull(line, "Input line cannot be null");
         String[] parts = line.split(", ");
 
-        Task baseTask = createBaseTask(parts);
-
-        if (parts.length >= EXTENDED_TASK_ELEMENTS) {
-            if (line.contains("[") && line.contains("]")) {
-                return createEpicTask(line, baseTask);
-            } else {
-                return createSubTask(parts, baseTask);
-            }
+        if (parts.length < 8) {
+            throw new IllegalArgumentException("Invalid task string format. Expected at least 8 parts, got: " + parts.length);
         }
-        return baseTask;
-    }
 
+        String type = parts[1];
+
+        switch (type) {
+            case "Task":
+                return createBaseTask(parts);
+            case "EpicTask":
+                return createEpicTask(line, createBaseTask(parts));
+            case "SubTask":
+                return createSubTask(parts, createBaseTask(parts));
+            default:
+                throw new IllegalArgumentException("Unknown task type: " + type);
+        }
+    }
 
     private static Task createBaseTask(String[] parts) {
         try {
             UUID uuid = UUID.fromString(parts[0]);
-            String name = parts[1];
-            String description = parts[2];
-            Status status = Status.fromString(parts[3]);
-            return new Task(uuid, name, description, status);
+            String type = parts[1];
+            String name = parts[2];
+            String description = parts[3];
+            Status status = Status.fromString(parts[4]);
+            Duration duration = parseDuration(parts[5]);
+            LocalDateTime startTime = parseDateTime(parts[6]);
+
+            return new Task(uuid, name, description, status, duration, startTime);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse base task fields", e);
         }
     }
 
+    private static Duration parseDuration(String durationStr) {
+        if (durationStr.equals("N/A") || durationStr.equals("null")) {
+            return null;
+        }
+
+        String[] parts = durationStr.split(":");
+        if (parts.length == 3) {
+            long hours = Long.parseLong(parts[0]);
+            long minutes = Long.parseLong(parts[1]);
+            long seconds = Long.parseLong(parts[2]);
+            return Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds);
+        }
+
+        throw new IllegalArgumentException("Invalid duration format: " + durationStr);
+    }
+
+    private static LocalDateTime parseDateTime(String dateTimeStr) {
+        if (dateTimeStr.equals("N/A")) {
+            return null;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
+        return LocalDateTime.parse(dateTimeStr, formatter);
+    }
+
     private static Task createSubTask(String[] parts, Task baseTask) {
-        UUID epicId = UUID.fromString(parts[5]);
+        if (parts.length < 9) {
+            throw new IllegalArgumentException("SubTask requires epicId field at position 8");
+        }
+        UUID epicId = UUID.fromString(parts[8]);
         return new SubTask(baseTask, epicId);
     }
 
@@ -127,21 +180,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         if (input == null || input.trim().isEmpty() || input.equals("[]")) {
             return Collections.emptyList();
         }
-
-        List<UUID> uuids = new ArrayList<>();
-        String[] parts = input.split(",\\s*");
-
-        for (String part : parts) {
-            try {
-                String uuidStr = part.trim();
-                if (!uuidStr.isEmpty()) {
-                    uuids.add(UUID.fromString(uuidStr));
-                }
-            } catch (IllegalArgumentException e) {
-                System.err.println("Fatal parsing UUID: '" + part + "'");
-            }
-        }
-
-        return uuids;
+        return Arrays.stream(input.split(",\\s*"))
+                .map(String::trim)
+                .filter(part -> !part.isEmpty())
+                .map(part -> {
+                    try {
+                        return UUID.fromString(part);
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Invalid UUID format: '" + part + "'");
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }
