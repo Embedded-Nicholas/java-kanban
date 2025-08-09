@@ -29,6 +29,17 @@ public class Task {
         this.startTime = startTime;
     }
 
+    public Task(UUID id) {
+        this.id = id != null ? id : UUID.randomUUID();
+        this.type = this.getClass().getSimpleName();
+        this.name = String.valueOf(UUID.fromString(String.format("%s%s", this.type, this.id)));
+        this.description = String.format("%sDescription", this.name);
+        this.status = Status.NEW;
+        this.duration = null;
+        this.startTime = null;
+
+    }
+
     public Task(String name, String description, Duration duration, LocalDateTime startTime) {
         this(null, name, description, null, duration, startTime);
     }
