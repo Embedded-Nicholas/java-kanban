@@ -57,9 +57,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public <T extends Task> List<T> getTasksByType(Class<T> taskType) {
-        return this.tasks.values().stream()
-                .filter(task -> task.getClass().equals(taskType))
-                .map(taskType::cast).collect(Collectors.toList());
+        return this.tasks.values().stream().filter(task -> task.getClass().equals(taskType)).map(taskType::cast).collect(Collectors.toList());
     }
 
     @Override
@@ -93,9 +91,7 @@ public class InMemoryTaskManager implements TaskManager {
     private void initializeEpicTaskTimeFields(EpicTask epicTask) {
         this.prioritizedTasks.remove(epicTask);
 
-        List<Task> subTaskList = this.prioritizedTasks.stream()
-                .filter(task -> task instanceof SubTask subTask && subTask.getEpicTaskId()
-                        .equals(epicTask.getId())).toList();
+        List<Task> subTaskList = this.prioritizedTasks.stream().filter(task -> task instanceof SubTask subTask && subTask.getEpicTaskId().equals(epicTask.getId())).toList();
 
         if (subTaskList.isEmpty()) return;
 
@@ -103,18 +99,12 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (firstStartTime.isEmpty()) return;
 
-        List<LocalDateTime> endTimes = subTaskList.stream()
-                .map(Task::getEndTime)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
+        List<LocalDateTime> endTimes = subTaskList.stream().map(Task::getEndTime).filter(Optional::isPresent).map(Optional::get).toList();
 
         if (endTimes.isEmpty()) return;
 
         LocalDateTime epicStartLocalDateTime = firstStartTime.get();
-        LocalDateTime epicEndLocalDateTime = endTimes.stream()
-                .max(LocalDateTime::compareTo)
-                .orElse(epicStartLocalDateTime);
+        LocalDateTime epicEndLocalDateTime = endTimes.stream().max(LocalDateTime::compareTo).orElse(epicStartLocalDateTime);
 
         Duration duration = Duration.between(epicStartLocalDateTime, epicEndLocalDateTime);
 
@@ -141,8 +131,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isOverlapping(Task taskToAdd, Task existingTask) {
-        if (taskToAdd.getStartTime().isEmpty() || taskToAdd.getEndTime().isEmpty()
-                || existingTask.getStartTime().isEmpty() || existingTask.getEndTime().isEmpty()) {
+        if (taskToAdd.getStartTime().isEmpty() || taskToAdd.getEndTime().isEmpty() || existingTask.getStartTime().isEmpty() || existingTask.getEndTime().isEmpty()) {
             return false;
         }
 
@@ -151,7 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         LocalDateTime existingStart = existingTask.getStartTime().get();
         LocalDateTime existingEnd = existingTask.getEndTime().get();
-        
+
         return InMemoryTaskManager.checkOverlapping(taskToAddStart, existingStart, existingEnd, taskToAddEnd);
     }
 
@@ -246,8 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void deleteEpicTask(EpicTask epicTask) {
-        if (isInHistory(epicTask))
-            epicTask.getSubTasksIdList().forEach(this.historyManager::remove);
+        if (isInHistory(epicTask)) epicTask.getSubTasksIdList().forEach(this.historyManager::remove);
         epicTask.getSubTasksIdList().forEach(this.tasks::remove);
         epicTask.clearSubTasks();
 
@@ -264,9 +252,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private static boolean checkOverlapping(LocalDateTime taskToAddStart, LocalDateTime existingStart, LocalDateTime existingEnd, LocalDateTime taskToAddEnd) {
-        return (taskToAddStart.isAfter(existingStart) && taskToAddStart.isBefore(existingEnd))
-                || (taskToAddEnd.isAfter(existingStart) && taskToAddEnd.isBefore(existingEnd))
-                || (taskToAddStart.compareTo(existingStart) >= 0 && taskToAddEnd.compareTo(existingEnd) <= 0)
-                || (taskToAddStart.compareTo(existingStart) <= 0 && taskToAddEnd.compareTo(existingEnd) >= 0);
+        return (taskToAddStart.isAfter(existingStart) && taskToAddStart.isBefore(existingEnd)) || (taskToAddEnd.isAfter(existingStart) && taskToAddEnd.isBefore(existingEnd)) || (taskToAddStart.compareTo(existingStart) >= 0 && taskToAddEnd.compareTo(existingEnd) <= 0) || (taskToAddStart.compareTo(existingStart) <= 0 && taskToAddEnd.compareTo(existingEnd) >= 0);
     }
 }
