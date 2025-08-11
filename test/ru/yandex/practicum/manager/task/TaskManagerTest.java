@@ -29,20 +29,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         this.taskManager = createTaskManager();
         this.task = new Task("Task", "Description", Duration.ofHours(2),
                 LocalDateTime.of(2025, Month.JULY, 1, 12, 0));
+        this.taskManager.add(task);
         this.epicTask = new EpicTask("Epic", "Description");
+        this.taskManager.add(epicTask);
         this.subTask = new SubTask("Subtask", "Description", this.epicTask.getId(),
                 Duration.ofMinutes(45), LocalDateTime.of(2025,
                 Month.JULY, 2, 12, 0));
-        this.addTasks();
+        this.taskManager.add(subTask);
     }
 
     protected abstract T createTaskManager();
-
-    protected void addTasks() {
-        this.taskManager.add(task);
-        this.taskManager.add(epicTask);
-        this.taskManager.add(subTask);
-    }
 
     @Test
     void getAllTasks() {
@@ -75,7 +71,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void updateTask() {
         this.taskManager.updateTask(this.task, Status.DONE);
-        this.taskManager.updateTask(this.epicTask, Status.DONE);
         this.taskManager.updateTask(this.subTask, Status.IN_PROGRESS);
 
         assertAll(

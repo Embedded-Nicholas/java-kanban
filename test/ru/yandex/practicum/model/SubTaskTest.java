@@ -19,11 +19,10 @@ class SubTaskTest {
     @Test
     void subCannotBeEpicOfItself() {
         EpicTask epic = new EpicTask("Epic", "Description");
+        taskManager.add(epic);
         SubTask invalidSubTask = new SubTask("Subtask", "Description", epic.getId(),
                 null, null);
         invalidSubTask.setId(epic.getId());
-
-        taskManager.add(epic);
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,

@@ -2,9 +2,12 @@ package ru.yandex.practicum.manager.history;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.manager.exception.NotFoundException;
 import ru.yandex.practicum.manager.task.TaskManager;
 import ru.yandex.practicum.manager.util.Managers;
 import ru.yandex.practicum.model.Task;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +25,10 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void checkHistoryWithoutAddingToManager() {
-        taskManager.getTaskByUUID(this.task1.getId());
+        assertThrows(NotFoundException.class, () -> {
+            this.taskManager.getTaskByUUID(this.task1.getId());
+        });
+
         assertFalse(this.taskManager.getHistory().contains(this.task1));
     }
 
@@ -105,6 +111,10 @@ class InMemoryHistoryManagerTest {
         InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
         Task additionalTask = new Task("Task3", "Description3", null, null);
 
+        this.task1.setId(UUID.randomUUID());
+        this.task2.setId(UUID.randomUUID());
+        additionalTask.setId(UUID.randomUUID());
+
         historyManager.add(this.task1);
         historyManager.add(this.task2);
         historyManager.add(additionalTask);
@@ -113,13 +123,5 @@ class InMemoryHistoryManagerTest {
 
         assertEquals(historyManager.getHistory().size(), 2);
     }
-
-
-//
-//    @Override
-//    public void remove(UUID uuid) {
-//        this.taskHistory.remove(uuid);
-//    }
-//
 
 }

@@ -1,2 +1,2 @@
 id, type, name, description, status, duration, start time, end time, epicId/SubtaskIdsList
-15c9c714-9e90-42fc-bee6-1a471f4b3f32, Task, T1, D1, New, 00:10:00, 11.08.2025|11:17, 11.08.2025|11:27
+1f152ba1-81d4-456b-9469-a337322dfa97, EpicTask, Epic, Description, New, N/A, N/A, N/A, []
