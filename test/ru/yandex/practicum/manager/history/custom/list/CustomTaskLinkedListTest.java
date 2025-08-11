@@ -6,6 +6,8 @@ import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CustomTaskLinkedListTest {
@@ -19,9 +21,12 @@ class CustomTaskLinkedListTest {
     void setUp() {
         this.list = new CustomTaskLinkedList();
         task = new Task("Task", "Description", null, null);
+        task.setId(UUID.randomUUID());
         epicTask = new EpicTask("Epic", "Description");
+        epicTask.setId(UUID.randomUUID());
         subTask = new SubTask("Subtask", "Description", epicTask.getId(), null
                 , null);
+        subTask.setId(UUID.randomUUID());
     }
 
     @Test
