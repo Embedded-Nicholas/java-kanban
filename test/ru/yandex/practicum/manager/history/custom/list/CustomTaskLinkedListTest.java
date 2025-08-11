@@ -6,6 +6,8 @@ import ru.yandex.practicum.model.EpicTask;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CustomTaskLinkedListTest {
@@ -18,9 +20,13 @@ class CustomTaskLinkedListTest {
     @BeforeEach
     void setUp() {
         this.list = new CustomTaskLinkedList();
-        task = new Task("Task", "Description");
+        task = new Task("Task", "Description", null, null);
+        task.setId(UUID.randomUUID());
         epicTask = new EpicTask("Epic", "Description");
-        subTask = new SubTask("Subtask", "Description", epicTask.getId());
+        epicTask.setId(UUID.randomUUID());
+        subTask = new SubTask("Subtask", "Description", epicTask.getId(), null
+                , null);
+        subTask.setId(UUID.randomUUID());
     }
 
     @Test
@@ -32,12 +38,34 @@ class CustomTaskLinkedListTest {
     }
 
     @Test
-    void remove() {
+    void removeFirst() {
         this.add();
         this.list.remove(task.getId());
         assertAll(
                 () -> assertEquals(this.list.getHead(), this.epicTask),
                 () -> assertEquals(this.list.getTail(), this.subTask),
+                () -> assertEquals(this.list.size(), 2)
+        );
+    }
+
+    @Test
+    void removeMid() {
+        this.add();
+        this.list.remove(epicTask.getId());
+        assertAll(
+                () -> assertEquals(this.list.getHead(), this.task),
+                () -> assertEquals(this.list.getTail(), this.subTask),
+                () -> assertEquals(this.list.size(), 2)
+        );
+    }
+
+    @Test
+    void removeLast() {
+        this.add();
+        this.list.remove(subTask.getId());
+        assertAll(
+                () -> assertEquals(this.list.getHead(), this.task),
+                () -> assertEquals(this.list.getTail(), this.epicTask),
                 () -> assertEquals(this.list.size(), 2)
         );
     }

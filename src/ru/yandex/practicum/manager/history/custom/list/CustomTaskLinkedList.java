@@ -100,6 +100,11 @@ public class CustomTaskLinkedList implements CustomTaskList<Task> {
         return this.size;
     }
 
+    @Override
+    public boolean contains(Task task) {
+        return this.tasks.containsKey(task.getId());
+    }
+
     public Task getTail() {
         return this.tail.getValue();
     }
