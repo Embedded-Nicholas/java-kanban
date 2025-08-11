@@ -1,5 +1,6 @@
 package ru.yandex.practicum.manager.task.memory;
 
+import ru.yandex.practicum.manager.exception.NotFoundException;
 import ru.yandex.practicum.manager.exception.TaskIntersectionException;
 import ru.yandex.practicum.manager.history.HistoryManager;
 import ru.yandex.practicum.manager.task.TaskManager;
@@ -18,10 +19,6 @@ import java.util.stream.Collectors;
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<UUID, Task> tasks = new LinkedHashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
-
-    public HistoryManager getHistoryManager() {
-        return this.historyManager;
-    }
 
     protected final Set<Task> prioritizedTasks = new TreeSet<>((task1, task2) -> {
         Optional<LocalDateTime> time1 = task1.getStartTime();
@@ -61,12 +58,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public <T extends Task> List<T> getTasksByType(Class<T> taskType) {
         return this.tasks.values().stream()
-                .filter(taskType::isInstance)
+                .filter(task -> task.getClass().equals(taskType))
                 .map(taskType::cast).collect(Collectors.toList());
     }
 
     @Override
-    public void add(Task newTask) {
+    public void add(Task newTask) throws TaskIntersectionException, IllegalArgumentException {
+        newTask.initDefaults();
         if (checkTaskIntersection(newTask)) {
             throw new TaskIntersectionException("Task " + newTask + " cannot be added due to time intersection with existing tasks");
         }
@@ -164,20 +162,23 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllTasks() {
         this.tasks.clear();
+        this.prioritizedTasks.clear();
+        this.historyManager.clearHistory();
     }
 
     @Override
-    public Task getTaskByUUID(UUID uuid) {
+    public Task getTaskByUUID(UUID uuid) throws NotFoundException {
         if (this.tasks.containsKey(uuid)) {
             this.historyManager.add(this.tasks.get(uuid));
+            return this.tasks.get(uuid);
         }
-        return this.tasks.get(uuid);
+        throw new NotFoundException("Task not found");
     }
 
     @Override
-    public void updateTask(Task task, Status newStatus) {
-        if (task == null || task instanceof EpicTask) {
-            return;
+    public void updateTask(Task task, Status newStatus) throws NotFoundException {
+        if (task == null || task.getClass().equals(EpicTask.class) || !this.tasks.containsKey(task.getId())) {
+            throw new NotFoundException("Task not found or task is instance of EpicTask");
         }
 
         task.setStatus(newStatus);
@@ -189,10 +190,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTaskByUUID(UUID uuid) {
+    public void deleteTaskByUUID(UUID uuid) throws NotFoundException {
         Task task = this.tasks.get(uuid);
         if (task == null) {
-            return;
+            throw new NotFoundException("Task not found");
         }
 
         switch (task) {
@@ -205,6 +206,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (isInHistory(task)) {
             this.historyManager.remove(uuid);
         }
+
         this.tasks.remove(uuid);
         this.prioritizedTasks.remove(task);
     }
@@ -217,8 +219,8 @@ public class InMemoryTaskManager implements TaskManager {
         UUID epicId = subTask.getEpicTaskId();
         Task potentialEpic = this.tasks.get(epicId);
 
-        if (potentialEpic instanceof EpicTask epicTask) {
-            updateEpicStatus(epicTask);
+        if (potentialEpic.getClass().equals(EpicTask.class)) {
+            updateEpicStatus((EpicTask) potentialEpic);
         }
     }
 
@@ -248,7 +250,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void deleteEpicTask(EpicTask epicTask) {
-        if (isInHistory(epicTask)) epicTask.getSubTasksIdList().forEach(this.historyManager::remove);
+        if (isInHistory(epicTask))
+            epicTask.getSubTasksIdList().forEach(this.historyManager::remove);
         epicTask.getSubTasksIdList().forEach(this.tasks::remove);
         epicTask.clearSubTasks();
 

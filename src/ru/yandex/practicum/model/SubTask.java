@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class SubTask extends Task {
-    private final UUID epicTaskId;
+    private UUID epicTaskId;
 
     public SubTask(String name, String description, UUID epicTaskId, Duration duration, LocalDateTime startTime) {
         super(name, description, duration, startTime);

@@ -13,4 +13,6 @@ public interface HistoryManager {
     void remove(UUID uuid);
 
     void update(Task task);
+
+    void clearHistory();
 }

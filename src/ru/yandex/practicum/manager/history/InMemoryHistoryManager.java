@@ -37,6 +37,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         this.taskHistory.update(task);
     }
 
+    @Override
+    public void clearHistory() {
+        this.taskHistory.clear();
+    }
+
     private void addTaskCopy(Task task) {
         if (task instanceof EpicTask) {
             taskHistory.add(new EpicTask((EpicTask) task));
