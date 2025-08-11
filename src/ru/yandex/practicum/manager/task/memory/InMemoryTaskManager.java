@@ -151,12 +151,8 @@ public class InMemoryTaskManager implements TaskManager {
 
         LocalDateTime existingStart = existingTask.getStartTime().get();
         LocalDateTime existingEnd = existingTask.getEndTime().get();
-
-        boolean isOverlapping = (taskToAddStart.isAfter(existingStart) && taskToAddStart.isBefore(existingEnd))
-                || (taskToAddEnd.isAfter(existingStart) && taskToAddEnd.isBefore(existingEnd))
-                || (taskToAddStart.compareTo(existingStart) >= 0 && taskToAddEnd.compareTo(existingEnd) <= 0)
-                || (taskToAddStart.compareTo(existingStart) <= 0 && taskToAddEnd.compareTo(existingEnd) >= 0);
-        return isOverlapping;
+        
+        return InMemoryTaskManager.checkOverlapping(taskToAddStart, existingStart, existingEnd, taskToAddEnd);
     }
 
     @Override
@@ -265,5 +261,12 @@ public class InMemoryTaskManager implements TaskManager {
             this.prioritizedTasks.remove(subTask);
             this.initializeEpicTaskTimeFields(epicTask);
         }
+    }
+
+    private static boolean checkOverlapping(LocalDateTime taskToAddStart, LocalDateTime existingStart, LocalDateTime existingEnd, LocalDateTime taskToAddEnd) {
+        return (taskToAddStart.isAfter(existingStart) && taskToAddStart.isBefore(existingEnd))
+                || (taskToAddEnd.isAfter(existingStart) && taskToAddEnd.isBefore(existingEnd))
+                || (taskToAddStart.compareTo(existingStart) >= 0 && taskToAddEnd.compareTo(existingEnd) <= 0)
+                || (taskToAddStart.compareTo(existingStart) <= 0 && taskToAddEnd.compareTo(existingEnd) >= 0);
     }
 }

@@ -21,12 +21,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BaseHttpHandlerTest {
-    static HttpTaskServer taskServer;
-    static Gson gson;
-    static HttpClient client;
+    private static HttpTaskServer taskServer;
+    private static Gson gson;
+    private static HttpClient client;
 
     @BeforeAll
-    static void init() throws IOException {
+    public static void init() throws IOException {
         taskServer = new HttpTaskServer(8080);
         gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
@@ -366,7 +366,8 @@ public class BaseHttpHandlerTest {
         response = sendGet("http://localhost:8080/epics/" + epicTask.getId() + "/subtasks");
         assertEquals(200, response.statusCode());
 
-        List<SubTask> subtasks = gson.fromJson(response.body(), new TypeToken<List<SubTask>>(){}.getType());
+        List<SubTask> subtasks = gson.fromJson(response.body(), new TypeToken<List<SubTask>>() {
+        }.getType());
         assertEquals(2, subtasks.size());
         assertEquals(retrievedSubtask1, subtasks.get(0));
         assertEquals(retrievedSubtask2, subtasks.get(1));
